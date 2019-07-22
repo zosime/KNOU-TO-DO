@@ -114,34 +114,12 @@ export default class LoginPage extends Component {
     super(props);
 
     this.inputRefs = {
-      firstTextInput: null,
-      favSport0: null,
-      favSport1: null,
-      lastTextInput: null,
-      favSport5: null
+      inputName: null
     };
 
     this.state = {
-      numbers: [
-        {
-          label: "1",
-          value: 1,
-          color: "orange"
-        },
-        {
-          label: "2",
-          value: 2,
-          color: "green"
-        }
-      ],
-      favSport0: undefined,
-      favSport1: undefined,
-      favSport2: undefined,
-      favSport3: undefined,
-      favSport4: "baseball",
-      previousFavSport5: undefined,
-      favSport5: undefined,
-      favNumber: undefined
+      prevInputName: null,
+      inputName: null
     };
 
     this.InputAccessoryView = this.InputAccessoryView.bind(this);
@@ -154,10 +132,10 @@ export default class LoginPage extends Component {
           onPress={() => {
             this.setState(
               {
-                favSport5: this.state.previousFavSport5
+                inputName: this.state.prevInputName
               },
               () => {
-                this.inputRefs.favSport5.togglePicker(true);
+                this.inputRefs.inputName.togglePicker(true);
               }
             );
           }}
@@ -177,7 +155,7 @@ export default class LoginPage extends Component {
         <Text>Name | Prefer</Text>
         <TouchableWithoutFeedback
           onPress={() => {
-            this.inputRefs.favSport5.togglePicker(true);
+            this.inputRefs.className.togglePicker(true);
           }}
           hitSlop={{ top: 4, right: 4, bottom: 4, left: 4 }}
         >
@@ -202,7 +180,7 @@ export default class LoginPage extends Component {
     const { checkedclassName, checkedUserName, checkedUserNum } = this.state;
     const { onLogin } = this.props;
     const placeholder = {
-      label: "학과를 선택하세요.",
+      label: "학과 선택",
       value: null,
       color: "#9EA0A4"
     };
@@ -223,15 +201,10 @@ export default class LoginPage extends Component {
             <View style={styles.labelContainer}>
               <Text style={styles.label}>학과</Text>
             </View>
-            <View style={styles.titleView}>
+            <View style={styles.inputContainer}>
               <RNPickerSelect
                 placeholder={placeholder}
                 items={listClassName}
-                // onValueChange={value => {
-                //   this.setState({
-                //     className: value
-                //   });
-                // }}
                 onValueChange={val => this.onChangeText("className", val)}
                 style={{
                   ...pickerSelectStyles
@@ -322,23 +295,22 @@ export default class LoginPage extends Component {
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 4,
-    color: "black",
-    paddingRight: 30 // to ensure the text is never behind the icon
-  },
-  inputAndroid: {
-    width: "100%",
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
-    fontWeight: "bold",
-    borderBottomWidth: 2,
-    borderBottomColor: "#007cb6",
-    borderWidth: 0.5
+    fontWeight: "bold"
+    // fontSize: 16,
+    // paddingVertical: 12,
+    // paddingHorizontal: 10,
+    // borderWidth: 1,
+    // borderColor: "gray",
+    // borderRadius: 4,
+    // color: "black",
+    // paddingRight: 30 // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: SCREEN_WIDTH * 0.06,
+    color: "#007cb6",
+    fontWeight: "bold"
     // fontSize: SCREEN_WIDTH * 0.06,
     // color: "#007cb6",
     // paddingHorizontal: 10,
@@ -411,14 +383,17 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "65%",
-    justifyContent: "center"
+    marginVertical: SCREEN_WIDTH * 0.03,
+    marginLeft: SCREEN_WIDTH * 0.03,
+    justifyContent: "center",
+
+    borderBottomWidth: 3,
+    borderBottomColor: "#007cb6"
   },
   inputStyle: {
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
-    fontWeight: "bold",
-    borderBottomWidth: 2,
-    borderBottomColor: "#007cb6"
+    fontWeight: "bold"
   },
   loginBtn: {
     backgroundColor: "#007cb6"
