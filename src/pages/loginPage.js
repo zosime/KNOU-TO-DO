@@ -168,16 +168,14 @@ export default class LoginPage extends Component {
   }
 
   state = {
-    checkedclassName: false,
-    checkedUserName: false,
-    checkedUserNum: false,
     className: "",
     userName: "",
-    userNumber: ""
+    userNumber: "",
+    isLogBtnDisabled: true
   };
 
   render() {
-    const { checkedclassName, checkedUserName, checkedUserNum } = this.state;
+    const { className, userNumber, userName, isLogBtnDisabled } = this.state;
     const { onLogin } = this.props;
     const placeholder = {
       label: "학과 선택",
@@ -196,7 +194,7 @@ export default class LoginPage extends Component {
               size={SCREEN_HEIGHT * 0.06}
               uncheckedColor="#007cb6"
               checkedColor="#007cb6"
-              checked={checkedclassName}
+              checked={Boolean(className)}
             />
             <View style={styles.labelContainer}>
               <Text style={styles.label}>학과</Text>
@@ -214,12 +212,6 @@ export default class LoginPage extends Component {
                 textInputProps={{ underlineColor: "yellow" }}
               />
             </View>
-
-            {/* <Input
-              containerStyle={styles.inputContainer}
-              inputStyle={styles.inputStyle}
-              onChangeText={val => this.onChangeText("className", val)}
-            /> */}
           </View>
           <View style={styles.selectBoxList}>
             <CheckBox
@@ -227,7 +219,7 @@ export default class LoginPage extends Component {
               size={SCREEN_HEIGHT * 0.06}
               uncheckedColor="#007cb6"
               checkedColor="#007cb6"
-              checked={checkedUserNum}
+              checked={Boolean(userNumber)}
             />
             <View style={styles.labelContainer}>
               <Text style={styles.label}>학번</Text>
@@ -244,7 +236,7 @@ export default class LoginPage extends Component {
               size={SCREEN_HEIGHT * 0.06}
               uncheckedColor="#007cb6"
               checkedColor="#007cb6"
-              checked={checkedUserName}
+              checked={Boolean(userName)}
             />
             <View style={styles.labelContainer}>
               <Text style={styles.label}>이름</Text>
@@ -258,10 +250,11 @@ export default class LoginPage extends Component {
         </View>
         <View style={styles.loginBtnView}>
           <Button
+            onPress={() => this.onLoginClick()}
             buttonStyle={styles.loginBtn}
             titleStyle={styles.loginBtnTitle}
             title={"LOGIN"}
-            onPress={() => this.onLoginClick()}
+            disabled={!Boolean(className && userName && userNumber)}
           />
         </View>
       </View>
@@ -272,29 +265,38 @@ export default class LoginPage extends Component {
     switch (key) {
       case "userName":
         this.setState({
-          checkedUserName: Boolean(val)
+          userName: val
         });
         break;
       case "userNum":
         this.setState({
-          checkedUserNum: Boolean(val)
+          userNumber: val
         });
         break;
       case "className":
         this.setState({
-          checkedclassName: Boolean(val)
+          className: val
         });
         break;
     }
+    // if (this.state.userName && this.state.userNumber && this.state.className) {
+    //   this.setState({
+    //     isLogBtnDisabled: true
+    //   });
+    // }
   };
   onLoginClick = () => {
-    console.log("CLICK");
-    this.props.onLogin("AAA");
+    this.props.onLogin(
+      this.state.className,
+      this.state.userNumber,
+      this.state.userName
+    );
   };
 }
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
+    marginLeft: SCREEN_WIDTH * 0.02,
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
     fontWeight: "bold"
@@ -308,6 +310,7 @@ const pickerSelectStyles = StyleSheet.create({
     // paddingRight: 30 // to ensure the text is never behind the icon
   },
   inputAndroid: {
+    marginLeft: SCREEN_WIDTH * 0.02,
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
     fontWeight: "bold"
@@ -346,7 +349,7 @@ const styles = StyleSheet.create({
   },
   selectBoxView: {
     flex: 2,
-    width: "90%",
+    width: "94%",
     alignItems: "center",
     justifyContent: "center",
     marginVertical: "15%",
@@ -364,7 +367,7 @@ const styles = StyleSheet.create({
   },
   selectBoxList: {
     flex: 1,
-    width: "90%",
+    width: "94%",
     flexDirection: "row"
   },
   checkBoxContainer: {
@@ -373,7 +376,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   labelContainer: {
-    width: "15%",
+    width: "14%",
     justifyContent: "center"
   },
   label: {
@@ -382,11 +385,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   inputContainer: {
-    width: "65%",
+    width: "66%",
     marginVertical: SCREEN_WIDTH * 0.03,
-    marginLeft: SCREEN_WIDTH * 0.03,
+    marginLeft: SCREEN_WIDTH * 0.02,
     justifyContent: "center",
-
     borderBottomWidth: 3,
     borderBottomColor: "#007cb6"
   },
@@ -394,6 +396,9 @@ const styles = StyleSheet.create({
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
     fontWeight: "bold"
+  },
+  inputComponentStyle: {
+    borderBottomWidth: 0
   },
   loginBtn: {
     backgroundColor: "#007cb6"
