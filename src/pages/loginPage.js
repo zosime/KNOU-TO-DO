@@ -225,6 +225,7 @@ export default class LoginPage extends Component {
               <Text style={styles.label}>학번</Text>
             </View>
             <Input
+              inputContainerStyle={{ borderBottomWidth: 0 }}
               containerStyle={styles.inputContainer}
               inputStyle={styles.inputStyle}
               onChangeText={val => this.onChangeText("userNum", val)}
@@ -242,6 +243,7 @@ export default class LoginPage extends Component {
               <Text style={styles.label}>이름</Text>
             </View>
             <Input
+              inputContainerStyle={{ borderBottomWidth: 0 }}
               containerStyle={styles.inputContainer}
               inputStyle={styles.inputStyle}
               onChangeText={val => this.onChangeText("userName", val)}
