@@ -7,9 +7,13 @@ import {
   StyleSheet,
   TextInput
 } from "react-native";
+import { Input, CheckBox, Button, Icon } from "react-native-elements";
 import PropTypes from "prop-types";
 
-const { width, height } = Dimensions.get("window");
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const SCREEN_HEIGHT = Dimensions.get("window").height;
+
+//const { width, height } = Dimensions.get("window");
 
 export default class ToDoList extends Component {
   constructor(props) {
@@ -33,22 +37,38 @@ export default class ToDoList extends Component {
     const { isEditing, toDoValue } = this.state;
     const { text, id, deleteToDo, isCompleted } = this.props;
     console.log("text", text);
+    console.log("id", id);
     return (
       <View style={styles.container}>
         <View style={styles.column}>
-          <TouchableOpacity onPress={this._toggleComplete}>
-            <View
-              style={[
-                styles.circle,
-                isCompleted ? styles.completedCircle : styles.uncompletedCircle
-              ]}
-            />
-          </TouchableOpacity>
-          {isEditing ? (
+          <CheckBox
+            containerStyle={styles.checkBoxContainer}
+            size={SCREEN_HEIGHT * 0.04}
+            uncheckedColor="#007cb6"
+            checkedColor="#007cb6"
+            checked={Boolean(isCompleted)}
+            onPress={this._toggleComplete}
+          />
+          <Input
+            inputContainerStyle={{ borderBottomWidth: 0 }}
+            containerStyle={styles.inputContainer}
+            inputStyle={[
+              styles.text,
+              isCompleted ? styles.completedText : styles.uncompletedText
+            ]}
+            value={toDoValue}
+            returnKeyType={"done"}
+            onChangeText={this._controllInput}
+            autoCorrect={false}
+            onSubmitEditing={this._finishEditing}
+            multiline={true}
+            blurOnSubmit={true}
+          />
+
+          {/* {isEditing ? (
             <TextInput
               style={[
                 styles.text,
-                styles.input,
                 isCompleted ? styles.completedText : styles.uncompletedText
               ]}
               value={toDoValue}
@@ -66,35 +86,24 @@ export default class ToDoList extends Component {
             >
               {text}
             </Text>
-          )}
+          )} */}
         </View>
-        {isEditing ? (
-          <View style={styles.actions}>
-            <TouchableOpacity onPressOut={this._finishEditing}>
-              <View style={styles.actionContainer}>
-                <Text style={styles.actionText}>✔️</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View style={styles.actions}>
-            <TouchableOpacity onPressOut={this._startEditing}>
-              <View style={styles.actionContainer}>
-                <Text style={styles.actionText}>✏️</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPressOut={event => {
-                event.stopPropagation;
+        <View style={styles.actionContainer}>
+          <Icon
+            name="x-square"
+            type="feather"
+            color="#f50"
+            size={SCREEN_WIDTH * 0.08}
+            onPress={event => {
+              this.color = "#000000";
+              event.stopPropagation;
+              setTimeout(() => {
                 deleteToDo(id);
-              }}
-            >
-              <View style={styles.actionContainer}>
-                <Text style={styles.actionText}>❌</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        )}
+              }, 200);
+            }}
+            underlayColor="#FFDDDD"
+          />
+        </View>
       </View>
     );
   }
@@ -131,33 +140,19 @@ export default class ToDoList extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: width - 50,
+    width: SCREEN_WIDTH * 0.96,
     borderBottomColor: "#bbb",
     borderBottomWidth: StyleSheet.hairlineWidth,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between"
   },
-  text: {
-    fontWeight: "600",
-    fontSize: 16,
-    marginVertical: 20
-  },
-  completedText: {
-    color: "#bbb",
-    textDecorationLine: "line-through"
-  },
-  uncompletedText: {
-    color: "#353535"
-  },
-  circle: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderColor: "red",
-    borderWidth: 3,
-    marginLeft: 10,
-    marginRight: 15
+
+  checkBoxContainer: {
+    width: "4%",
+    height: "4%",
+    alignItems: "center",
+    justifyContent: "center"
   },
   completedCircle: {
     borderColor: "#bbb"
@@ -168,18 +163,42 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: "row",
     alignItems: "center",
-    width: width / 2
-  },
-  actions: {
-    flexDirection: "row"
+    width: SCREEN_WIDTH * 0.76
   },
   actionContainer: {
-    marginVertical: 10,
-    marginHorizontal: 10
+    margin: SCREEN_WIDTH * 0.04,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  text: {},
+  completedText: {
+    fontWeight: "500",
+    fontSize: SCREEN_WIDTH * 0.05,
+    marginVertical: SCREEN_WIDTH * 0.02,
+    color: "#CCDDEE",
+    textDecorationLine: "line-through"
+  },
+  uncompletedText: {
+    fontWeight: "500",
+    fontSize: SCREEN_WIDTH * 0.05,
+    marginVertical: SCREEN_WIDTH * 0.02,
+    color: "#007cb6"
   },
   input: {
-    width: width / 2,
-    marginVertical: 15,
-    paddingBottom: 5
+    width: SCREEN_WIDTH * 0.5,
+    marginVertical: SCREEN_WIDTH * 0.02
+  },
+  deleteBtnContainer: {
+    width: SCREEN_WIDTH * 0.1,
+    height: SCREEN_WIDTH * 0.1
+  },
+  deleteBtn: {
+    width: SCREEN_WIDTH * 0.1,
+    height: SCREEN_WIDTH * 0.1
+  },
+  deleteBtnTitle: {
+    color: "#FFFFFF",
+    fontSize: SCREEN_WIDTH * 0.02,
+    fontWeight: "bold"
   }
 });

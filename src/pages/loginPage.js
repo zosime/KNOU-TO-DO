@@ -340,7 +340,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     width: "100%",
-    //backgroundColor: "#007cb6",
     backgroundColor: "#FFFFFF",
     alignItems: "center"
   },
@@ -370,7 +369,8 @@ const styles = StyleSheet.create({
   selectBoxList: {
     flex: 1,
     width: "94%",
-    flexDirection: "row"
+    flexDirection: "row",
+    justifyContent: "center"
   },
   checkBoxContainer: {
     width: "10%",

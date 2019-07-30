@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, CheckBox } from "react-native-elements";
+import { Input, CheckBox, Button } from "react-native-elements";
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,6 @@ import {
   ScrollView,
   AsyncStorage
 } from "react-native";
-import { Button } from "react-native-elements";
 import uuidv1 from "uuid/v1";
 import ToDoList from "../components/ToDoList";
 
@@ -26,8 +25,6 @@ export default class ToDoPage extends Component {
       loadedToDos: false,
       toDos: {}
     };
-    console.log("profile", props.profile);
-    //this.state = { isEditing: false, toDoValue: props.text };
   }
   componentDidMount = () => {
     this._loadToDos();
@@ -41,7 +38,7 @@ export default class ToDoPage extends Component {
       loadedToDos,
       toDos
     } = this.state;
-    console.log("toDos", toDos);
+
     if (!loadedToDos) {
       return (
         <View style={styles.container}>
@@ -69,8 +66,7 @@ export default class ToDoPage extends Component {
           <View style={styles.selectBoxList}>
             <CheckBox
               containerStyle={styles.checkBoxContainer}
-              la
-              size={SCREEN_HEIGHT * 0.04}
+              size={SCREEN_HEIGHT * 0.05}
               uncheckedColor="#007cb6"
               checkedColor="#007cb6"
               checked={Boolean(newToDo)}
@@ -90,7 +86,9 @@ export default class ToDoPage extends Component {
         <View style={styles.scrollView}>
           <ScrollView>
             {Object.values(toDos)
-              .reverse()
+              .sort((a, b) => {
+                return b.createdAt - a.createdAt;
+              })
               .map(toDo => (
                 <ToDoList
                   key={toDo.id}
@@ -167,7 +165,10 @@ export default class ToDoPage extends Component {
   };
   _deleteToDo = id => {
     this.setState(prevState => {
-      const toDos = prevState.todos;
+      console.log("className", prevState.className);
+      const toDos = prevState.toDos;
+      console.log("_deleteToDo id", id);
+      console.log("_deleteToDo toDos", toDos);
       delete toDos[id];
       const newState = {
         ...prevState,
@@ -214,7 +215,7 @@ export default class ToDoPage extends Component {
       const newState = {
         ...prevState,
         toDos: {
-          ...prevState.toDos[i],
+          ...prevState.toDos,
           [id]: {
             ...prevState.toDos[id],
             text: text
@@ -226,6 +227,7 @@ export default class ToDoPage extends Component {
     });
   };
   _saveToDo = newToDos => {
+    console.log("_saveToDo", newToDos);
     const saveToDos = AsyncStorage.setItem("toDos", JSON.stringify(newToDos));
   };
 }
@@ -241,15 +243,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: SCREEN_WIDTH,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFDD00"
+    justifyContent: "center"
   },
   profileView: {
     flex: 1,
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FFEE00",
     flexDirection: "row",
     borderBottomWidth: 2,
     borderBottomColor: "#007cb6"
@@ -259,22 +259,20 @@ const styles = StyleSheet.create({
     width: "94%",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: SCREEN_WIDTH * 0.02,
-    backgroundColor: "#FFEEFF"
+    borderRadius: SCREEN_WIDTH * 0.02
   },
   scrollView: {
     flex: 6,
     width: "94%",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#FFFF00"
+    justifyContent: "center"
   },
   selectBoxList: {
     width: "94%",
     flexDirection: "row"
   },
   checkBoxContainer: {
-    width: "4%",
+    width: "6%",
     alignItems: "center",
     justifyContent: "center"
   },
@@ -291,18 +289,16 @@ const styles = StyleSheet.create({
     fontWeight: "400"
   },
   profileNameView: {
-    width: "40%",
-    backgroundColor: "#FF0000"
+    width: "40%"
   },
   profileNumView: {
     width: "54%",
-    backgroundColor: "#FF0000",
     alignItems: "flex-end"
   },
   nameText: {
     color: "#007cb6",
     fontSize: SCREEN_WIDTH * 0.06,
-    fontWeight: "400"
+    fontWeight: "500"
   },
   userNumText: {
     color: "#007cb6",
