@@ -15,7 +15,7 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 //const { width, height } = Dimensions.get("window");
 
-export default class ToDoList extends Component {
+export default class MyToDoList extends Component {
   constructor(props) {
     super(props);
     this.state = { isEditing: false, toDoValue: props.text };
@@ -36,14 +36,16 @@ export default class ToDoList extends Component {
   render() {
     const { isEditing, toDoValue } = this.state;
     const { text, id, deleteToDo, isCompleted } = this.props;
+    console.log("text", text);
+    console.log("id", id);
     return (
       <View style={styles.container}>
         <View style={styles.column}>
           <CheckBox
             containerStyle={styles.checkBoxContainer}
             size={SCREEN_HEIGHT * 0.04}
-            uncheckedColor="#007cb6"
-            checkedColor="#007cb6"
+            uncheckedColor="#eb3b5a"
+            checkedColor="#eb3b5a"
             checked={Boolean(isCompleted)}
             onPress={this._toggleComplete}
           />
@@ -64,21 +66,20 @@ export default class ToDoList extends Component {
           />
         </View>
         <View style={styles.actionContainer}>
-          {/* <Icon
-            name="external-link"
+          <Icon
+            name="x-square"
             type="feather"
-            color="#2980b9"
+            color="#f50"
             size={SCREEN_WIDTH * 0.08}
             onPress={event => {
               this.color = "#000000";
               event.stopPropagation;
               setTimeout(() => {
-                onlink(id);
-                //deleteToDo(id);
+                deleteToDo(id);
               }, 200);
             }}
             underlayColor="#FFDDDD"
-          /> */}
+          />
         </View>
       </View>
     );
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     fontSize: SCREEN_WIDTH * 0.05,
     marginVertical: SCREEN_WIDTH * 0.02,
-    color: "#007cb6"
+    color: "#eb3b5a"
   },
   input: {
     width: SCREEN_WIDTH * 0.5,

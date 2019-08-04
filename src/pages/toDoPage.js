@@ -1,15 +1,11 @@
 import React, { Component } from "react";
-import { Input, CheckBox, Button } from "react-native-elements";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  ScrollView,
-  AsyncStorage
-} from "react-native";
-import uuidv1 from "uuid/v1";
-import ToDoList from "../components/ToDoList";
+import Tabbar from "react-native-tabbar-bottom";
+
+import MyInfoEditPage from "./MyInfoEditPage";
+import MyToDoPage from "./MyToDoPage";
+import KnouToDoPage from "./KnouToDoPage";
+import LoginPage from "./LoginPage";
+import { StyleSheet, View, Text, Dimensions } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -18,218 +14,58 @@ export default class ToDoPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      page: "KnouToDoPage",
       className: props.profile.cName,
       userName: props.profile.uName,
-      userNumber: props.profile.uNum,
-      newToDo: "",
-      loadedToDos: false,
-      toDos: {}
+      userNumber: props.profile.uNum
     };
   }
-  componentDidMount = () => {
-    this._loadToDos();
-  };
   render() {
-    const {
-      className,
-      userName,
-      userNumber,
-      newToDo,
-      loadedToDos,
-      toDos
-    } = this.state;
-
-    if (!loadedToDos) {
-      return (
-        <View style={styles.container}>
-          <View style={styles.titleView}>
-            <Text style={styles.titleText}>KNOU TO-DO LIST</Text>
-          </View>
-        </View>
-      );
-    }
+    const { className, userName, userNumber } = this.state;
     return (
       <View style={styles.container}>
-        <View style={styles.titleView}>
-          <Text style={styles.titleText}>KNOU TO-DO LIST</Text>
-        </View>
-        <View style={styles.profileView}>
-          <View style={styles.profileNameView}>
-            <Text style={styles.nameText}>{className}</Text>
-            <Text style={styles.nameText}>{userName}</Text>
-          </View>
-          <View style={styles.profileNumView}>
-            <Text style={styles.userNumText}>{userNumber}</Text>
-          </View>
-        </View>
-        <View style={styles.selectBoxView}>
-          <View style={styles.selectBoxList}>
-            <CheckBox
-              containerStyle={styles.checkBoxContainer}
-              size={SCREEN_HEIGHT * 0.05}
-              uncheckedColor="#007cb6"
-              checkedColor="#007cb6"
-              checked={Boolean(newToDo)}
-            />
-            <Input
-              inputContainerStyle={{ borderBottomWidth: 0 }}
-              containerStyle={styles.inputContainer}
-              inputStyle={styles.inputStyle}
-              value={newToDo}
-              returnKeyType={"done"}
-              onChangeText={val => this.onChangeText("newToDo", val)}
-              autoCorrect={false}
-              onSubmitEditing={this._addToDo}
-            />
-          </View>
-        </View>
-        <View style={styles.scrollView}>
-          <ScrollView>
-            {Object.values(toDos)
-              .sort((a, b) => {
-                return b.createdAt - a.createdAt;
-              })
-              .map(toDo => (
-                <ToDoList
-                  key={toDo.id}
-                  deleteToDo={this._deleteToDo}
-                  completeToDo={this._completeToDo}
-                  uncompleteToDo={this._uncompleteToDo}
-                  updateToDo={this._updateToDo}
-                  {...toDo}
-                />
-              ))}
-          </ScrollView>
-        </View>
+        {this.state.page === "MyInFo" && (
+          <MyInfoEditPage
+            profile={{ cName: className, uName: userName, uNum: userNumber }}
+          />
+        )}
+        {this.state.page === "MyToDoPage" && (
+          <MyToDoPage
+            profile={{ cName: className, uName: userName, uNum: userNumber }}
+          />
+        )}
+        {this.state.page === "KnouToDoPage" && (
+          <KnouToDoPage
+            profile={{ cName: className, uName: userName, uNum: userNumber }}
+          />
+        )}
+        <Tabbar
+          stateFunc={tab => {
+            this.setState({ page: tab.page });
+            //this.props.navigation.setParams({tabTitle: tab.title})
+          }}
+          iconColor="#FFFFFF"
+          selectedIconColor="#00cec9"
+          activePage={this.state.page}
+          tabs={[
+            {
+              page: "MyInFo",
+              icon: "person"
+            },
+            {
+              page: "KnouToDoPage",
+              icon: "school"
+            },
+            {
+              page: "MyToDoPage",
+              icon: "today"
+            }
+          ]}
+        />
       </View>
     );
   }
   //=============================================================
-  //내용입력
-  onChangeText = (key, val) => {
-    switch (key) {
-      case "newToDo":
-        this.setState({
-          newToDo: val
-        });
-        break;
-    }
-  };
-  _controllNewToDo = text => {
-    this.setState({});
-  };
-
-  //로컬스토리지 저장된 toDos 불러오기//
-  _loadToDos = async () => {
-    try {
-      const toDos = await AsyncStorage.getItem("toDos");
-      const parsedToDos = JSON.parse(toDos);
-      console.log("_loadToDos A", toDos);
-      this.setState({
-        loadedToDos: true,
-        toDos: parsedToDos || {}
-      });
-      console.log("_loadToDos B", toDos);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  _addToDo = () => {
-    const { newToDo } = this.state;
-    if (newToDo !== "") {
-      this.setState(prevState => {
-        const ID = uuidv1();
-        const newToDoObj = {
-          [ID]: {
-            id: ID,
-            isCompleted: false,
-            text: newToDo,
-            createdAt: Date.now()
-          }
-        };
-
-        const newState = {
-          ...prevState,
-          newToDo: "",
-          toDos: {
-            ...prevState.toDos,
-            ...newToDoObj
-          }
-        };
-
-        this._saveToDo(newState.toDos);
-        return { ...newState };
-      });
-    }
-  };
-  _deleteToDo = id => {
-    this.setState(prevState => {
-      console.log("className", prevState.className);
-      const toDos = prevState.toDos;
-      console.log("_deleteToDo id", id);
-      console.log("_deleteToDo toDos", toDos);
-      delete toDos[id];
-      const newState = {
-        ...prevState,
-        ...toDos
-      };
-      this._saveToDo(newState.toDos);
-      return { ...newState };
-    });
-  };
-  _uncompleteToDo = id => {
-    this.setState(prevState => {
-      const newState = {
-        ...prevState,
-        toDos: {
-          ...prevState.toDos,
-          [id]: {
-            ...prevState.toDos[id],
-            isCompleted: false
-          }
-        }
-      };
-      this._saveToDo(newState.toDos);
-      return { ...newState };
-    });
-  };
-  _completeToDo = id => {
-    this.setState(prevState => {
-      const newState = {
-        ...prevState,
-        toDos: {
-          ...prevState.toDos,
-          [id]: {
-            ...prevState.toDos[id],
-            isCompleted: true
-          }
-        }
-      };
-      this._saveToDo(newState.toDos);
-      return { ...newState };
-    });
-  };
-  _updateToDo = (id, text) => {
-    this.setState(prevState => {
-      const newState = {
-        ...prevState,
-        toDos: {
-          ...prevState.toDos,
-          [id]: {
-            ...prevState.toDos[id],
-            text: text
-          }
-        }
-      };
-      this._saveToDo(newState.toDos);
-      return { ...newState };
-    });
-  };
-  _saveToDo = newToDos => {
-    console.log("_saveToDo", newToDos);
-    const saveToDos = AsyncStorage.setItem("toDos", JSON.stringify(newToDos));
-  };
 }
 
 const styles = StyleSheet.create({
@@ -240,33 +76,35 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   titleView: {
-    flex: 1,
     width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT * 0.08,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    backgroundColor: "#007cb6"
   },
   profileView: {
-    flex: 1,
     width: "100%",
+    height: SCREEN_HEIGHT * 0.08,
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    borderBottomWidth: 2,
-    borderBottomColor: "#007cb6"
+    backgroundColor: "#007cb6"
+    // borderBottomWidth: 2,
+    // borderBottomColor: "#007cb6"
   },
   selectBoxView: {
-    flex: 1,
     width: "94%",
     alignItems: "center",
     justifyContent: "center",
     borderRadius: SCREEN_WIDTH * 0.02
   },
   scrollView: {
-    flex: 6,
+    flex: 8,
     width: "94%",
     alignItems: "center",
     justifyContent: "center"
   },
+
   selectBoxList: {
     width: "94%",
     flexDirection: "row"
@@ -276,16 +114,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-
   titleText: {
-    color: "#007cb6",
-    fontSize: SCREEN_WIDTH * 0.1,
+    color: "#FFFFFF",
+    fontSize: SCREEN_WIDTH * 0.08,
     fontWeight: "bold",
-    marginTop: SCREEN_HEIGHT * 0.025
+    marginTop: SCREEN_HEIGHT * 0.025,
+    height: SCREEN_HEIGHT * 0.08
   },
   profileText: {
-    color: "#007cb6",
-    fontSize: SCREEN_WIDTH * 0.06,
+    color: "#FFFFFF",
+    fontSize: SCREEN_WIDTH * 0.04,
     fontWeight: "400"
   },
   profileNameView: {
@@ -296,13 +134,13 @@ const styles = StyleSheet.create({
     alignItems: "flex-end"
   },
   nameText: {
-    color: "#007cb6",
-    fontSize: SCREEN_WIDTH * 0.06,
+    color: "#FFFFFF",
+    fontSize: SCREEN_WIDTH * 0.05,
     fontWeight: "500"
   },
   userNumText: {
-    color: "#007cb6",
-    fontSize: SCREEN_WIDTH * 0.065,
+    color: "#FFFFFF",
+    fontSize: SCREEN_WIDTH * 0.06,
     fontWeight: "500"
   },
   inputContainer: {
