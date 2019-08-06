@@ -9,7 +9,7 @@ import {
   AsyncStorage
 } from "react-native";
 import uuidv1 from "uuid/v1";
-import ToDoList from "../components/ToDoList";
+import KnouToDoList from "../components/KnouToDoList";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
@@ -70,7 +70,7 @@ export default class KnouToDoPage extends Component {
                 return b.createdAt - a.createdAt;
               })
               .map(toDo => (
-                <ToDoList
+                <KnouToDoList
                   key={toDo.id}
                   deleteToDo={this._deleteToDo}
                   completeToDo={this._completeToDo}
@@ -81,6 +81,7 @@ export default class KnouToDoPage extends Component {
               ))}
           </ScrollView>
         </View>
+        <View style={styles.buttomView} />
       </View>
     );
   }
@@ -105,8 +106,8 @@ export default class KnouToDoPage extends Component {
       const toDos = await AsyncStorage.getItem("knou_toDos");
       const parsedToDos = JSON.parse(toDos);
       this.setState({
-        loadedToDos: true,
-        toDos: parsedToDos || {}
+        toDos: parsedToDos || {},
+        loadedToDos: true
       });
     } catch (error) {
       console.log(error);
@@ -143,10 +144,7 @@ export default class KnouToDoPage extends Component {
   };
   _deleteToDo = id => {
     this.setState(prevState => {
-      console.log("className", prevState.className);
       const toDos = prevState.toDos;
-      console.log("_deleteToDo id", id);
-      console.log("_deleteToDo toDos", toDos);
       delete toDos[id];
       const newState = {
         ...prevState,
@@ -205,7 +203,6 @@ export default class KnouToDoPage extends Component {
     });
   };
   _saveToDo = newToDos => {
-    console.log("_saveToDo", newToDos);
     const saveToDos = AsyncStorage.setItem(
       "knou_toDos",
       JSON.stringify(newToDos)
@@ -249,7 +246,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center"
   },
-
+  buttomView: {
+    flex: 1,
+    width: "94%",
+    alignItems: "center",
+    justifyContent: "center"
+  },
   selectBoxList: {
     width: "94%",
     flexDirection: "row"

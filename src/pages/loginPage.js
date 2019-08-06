@@ -263,7 +263,6 @@ export default class LoginPage extends Component {
     );
   }
   onChangeText = (key, val) => {
-    console.log(key, val, Boolean(val));
     switch (key) {
       case "userName":
         this.setState({
@@ -281,11 +280,6 @@ export default class LoginPage extends Component {
         });
         break;
     }
-    // if (this.state.userName && this.state.userNumber && this.state.className) {
-    //   this.setState({
-    //     isLogBtnDisabled: true
-    //   });
-    // }
   };
   onLoginClick = () => {
     this.props.onLogin(
@@ -302,37 +296,12 @@ const pickerSelectStyles = StyleSheet.create({
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
     fontWeight: "bold"
-    // fontSize: 16,
-    // paddingVertical: 12,
-    // paddingHorizontal: 10,
-    // borderWidth: 1,
-    // borderColor: "gray",
-    // borderRadius: 4,
-    // color: "black",
-    // paddingRight: 30 // to ensure the text is never behind the icon
   },
   inputAndroid: {
     marginLeft: SCREEN_WIDTH * 0.02,
     fontSize: SCREEN_WIDTH * 0.06,
     color: "#007cb6",
     fontWeight: "bold"
-    // fontSize: SCREEN_WIDTH * 0.06,
-    // color: "#007cb6",
-    // paddingHorizontal: 10,
-    // paddingVertical: 8,
-    // borderWidth: 0.5,
-    // borderColor: "#4f5057",
-    // borderRadius: 8,
-    // paddingRight: 30 // to ensure the text is never behind the icon
-
-    // fontSize: 16,
-    // paddingHorizontal: 10,
-    // paddingVertical: 8,
-    // borderWidth: 0.5,
-    // borderColor: "#4f5057",
-    // borderRadius: 8,
-    // color: "black",
-    // paddingRight: 30 // to ensure the text is never behind the icon
   }
 });
 

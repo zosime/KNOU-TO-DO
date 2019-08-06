@@ -12,8 +12,8 @@ export default class App extends React.Component {
     className: "",
     userName: "",
     userNumber: "",
-    knou_toDos: {},
-    isLoaded: ""
+    isLoaded: false,
+    knou_toDos: {}
   };
   componentDidMount = () => {
     //this._onClearKnouToDos();
@@ -29,8 +29,8 @@ export default class App extends React.Component {
       knou_toDos,
       isLoaded
     } = this.state;
-
-    if (isLoaded == "COMPLETE") return <AppLoading />;
+    console.log("isLoaded", isLoaded);
+    if (!isLoaded) return <AppLoading />;
     if (userName) {
       return (
         <View style={styles.container}>
@@ -86,6 +86,9 @@ export default class App extends React.Component {
     try {
       const toDos = await AsyncStorage.getItem("knou_toDos");
       const parsedToDos = JSON.parse(toDos);
+      console.log("============APP PAGE=========");
+      console.log(parsedToDos);
+      console.log("====================================");
       this.setState({
         knou_toDos: parsedToDos || {}
       });
@@ -101,7 +104,7 @@ export default class App extends React.Component {
       .then(responseJson => {
         responseJson.map(toDo => {
           const ID = toDo.id;
-          const { knou_toDos } = this.state;
+          const { knou_toDos, isLoaded } = this.state;
           if (knou_toDos && knou_toDos[toDo.id]) {
             // console.log("동일데이터있음", knou_toDos[toDo.id].text);
           } else {
@@ -116,18 +119,21 @@ export default class App extends React.Component {
               }
             };
             this.setState(prevState => {
-              isLoaded: "complete";
               const newState = {
                 ...prevState,
-                toDos: {
-                  ...prevState.toDos,
+                knou_toDos: {
+                  ...prevState.knou_toDos,
                   ...newToDoObj
                 }
               };
-              this._saveToDo(newState.toDos);
+              console.log(newState.knou_toDos);
+              this._saveToDo(newState.knou_toDos);
               return { ...newState };
             });
           }
+        });
+        this.setState({
+          isLoaded: true
         });
       })
       .catch(error => {

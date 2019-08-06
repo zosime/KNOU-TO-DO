@@ -5,7 +5,8 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  TextInput
+  TextInput,
+  Linking
 } from "react-native";
 import { Input, CheckBox, Button, Icon } from "react-native-elements";
 import PropTypes from "prop-types";
@@ -15,16 +16,21 @@ const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 //const { width, height } = Dimensions.get("window");
 
-export default class ToDoList extends Component {
+export default class KnouToDoList extends Component {
   constructor(props) {
     super(props);
-    this.state = { isEditing: false, toDoValue: props.text };
+    this.state = {
+      isEditing: false,
+      toDoValue: props.text,
+      linkURL: props.link
+    };
   }
   static propTypes = {
     text: PropTypes.string.isRequired,
     isCompleted: PropTypes.bool.isRequired,
     deleteToDo: PropTypes.func.isRequired,
     id: PropTypes.string.isRequired,
+    link: PropTypes.string.isRequired,
     uncompleteToDo: PropTypes.func.isRequired,
     completeToDo: PropTypes.func.isRequired,
     updateToDo: PropTypes.func.isRequired
@@ -35,7 +41,7 @@ export default class ToDoList extends Component {
   };
   render() {
     const { isEditing, toDoValue } = this.state;
-    const { text, id, deleteToDo, isCompleted } = this.props;
+    const { id, link, deleteToDo, isCompleted } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.column}>
@@ -64,25 +70,34 @@ export default class ToDoList extends Component {
           />
         </View>
         <View style={styles.actionContainer}>
-          {/* <Icon
+          <Icon
             name="external-link"
             type="feather"
-            color="#2980b9"
+            color={Boolean(!link) ? "#DDDDDD" : "#2980b9"}
             size={SCREEN_WIDTH * 0.08}
+            disabled={Boolean(!link)}
+            disabledStyle={{ backgroundColor: "#FFFFFF" }}
             onPress={event => {
+              console.log("linkURL A", link);
               this.color = "#000000";
               event.stopPropagation;
               setTimeout(() => {
-                onlink(id);
+                console.log("linkURL B", link);
+                this._onLink(link);
                 //deleteToDo(id);
               }, 200);
             }}
             underlayColor="#FFDDDD"
-          /> */}
+          />
         </View>
       </View>
     );
   }
+  _onLink = url => {
+    console.log("url", url);
+    Linking.openURL(url);
+    return false;
+  };
   _toggleComplete = event => {
     event.stopPropagation;
     const { isCompleted, uncompleteToDo, completeToDo, id } = this.props;
