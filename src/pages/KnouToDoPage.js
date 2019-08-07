@@ -39,15 +39,6 @@ export default class KnouToDoPage extends Component {
       toDos
     } = this.state;
 
-    // if (!loadedToDos) {
-    //   return (
-    //     <View style={styles.container}>
-    //       <View style={styles.titleView}>
-    //         <Text style={styles.titleText}>KNOU TO-DO LIST</Text>
-    //       </View>
-    //     </View>
-    //   );
-    // }
     return (
       <View style={styles.container}>
         <View style={styles.titleView}>
@@ -67,8 +58,9 @@ export default class KnouToDoPage extends Component {
           <ScrollView>
             {Object.values(toDos)
               .sort((a, b) => {
-                return b.createdAt - a.createdAt;
+                return b.id - a.id;
               })
+              .reverse()
               .map(toDo => (
                 <KnouToDoList
                   key={toDo.id}

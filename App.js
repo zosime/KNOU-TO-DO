@@ -15,10 +15,13 @@ export default class App extends React.Component {
     isLoaded: false,
     knou_toDos: {}
   };
+  //기본 정보 불러오기
   componentDidMount = () => {
-    //this._onClearKnouToDos();
+    //회원정보 불러오기
     this._onLoadProfile();
+    //학교 체크리스트 로컬정보 불러오기
     this._onLoadKnouToDos();
+    //학교 체크리시트 웹정보 불러오기
     this._onLoadJsonfile();
   };
   render() {
@@ -46,6 +49,7 @@ export default class App extends React.Component {
       </View>
     );
   }
+  //로그인처리
   _onLogin = (cName, uNum, uName) => {
     const profile = {
       className: cName,
@@ -53,7 +57,6 @@ export default class App extends React.Component {
       userName: uName
     };
     this._onSaveProfile(profile);
-
     this.setState({
       className: cName,
       userNumber: uNum,
@@ -61,6 +64,7 @@ export default class App extends React.Component {
     });
   };
 
+  //프로필정보 저장
   _onSaveProfile = profile => {
     const saveProfile = AsyncStorage.setItem(
       "profile",
@@ -68,6 +72,7 @@ export default class App extends React.Component {
     );
   };
 
+  //프로필정보 불러오기
   _onLoadProfile = async () => {
     try {
       const profile = await AsyncStorage.getItem("profile");
@@ -82,22 +87,25 @@ export default class App extends React.Component {
     }
   };
   ////////////////////////////////////////////////////////////////////////////
+  //학교체크리스트 불러오기
   _onLoadKnouToDos = async () => {
     try {
       const toDos = await AsyncStorage.getItem("knou_toDos");
       const parsedToDos = JSON.parse(toDos);
-      console.log("============APP PAGE=========");
-      console.log(parsedToDos);
-      console.log("====================================");
+      // console.log("============APP PAGE=========");
+      // console.log(parsedToDos);
+      // console.log("====================================");
       this.setState({
         knou_toDos: parsedToDos || {}
       });
     } catch (err) {}
   };
-  _onClearKnouToDos = async () => {
-    const toDos = await AsyncStorage.clear();
-  };
+  //검수용 초기화 코드
+  // _onClearKnouToDos = async () => {
+  //   const toDos = await AsyncStorage.clear();
+  // };
   ////////////////////////////////////////////////////////////////////////////
+  //웹경로 데이터 불러오기 > 로컬데이터와 비교하여 로컬저장소 저장
   _onLoadJsonfile = async () => {
     return fetch("http://zosime.synology.me/knou/noti.json")
       .then(response => response.json())
@@ -141,6 +149,7 @@ export default class App extends React.Component {
       });
   };
 
+  //학교 체크리스트 저장
   _saveToDo = newToDos => {
     const saveToDos = AsyncStorage.setItem(
       "knou_toDos",
